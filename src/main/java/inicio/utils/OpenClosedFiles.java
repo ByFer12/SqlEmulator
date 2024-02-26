@@ -20,6 +20,7 @@ import javax.swing.JOptionPane;
  * @author tuxrex
  */
 public class OpenClosedFiles {
+    public static String extension=".csv";
     /**
      * Este metodo crea un nuevo archivoo dentro de una carpeta ya antes creada
      * @param carpetaProyecto
@@ -27,7 +28,7 @@ public class OpenClosedFiles {
      * @return 
      */
     public static File crearArchivoProyecto(File carpetaProyecto, String nombreArchivo) {
-        File file = new File(carpetaProyecto, nombreArchivo + ".txt");
+        File file = new File(carpetaProyecto, nombreArchivo + extension);
         try {
             if (file.createNewFile()) {
                 JOptionPane.showMessageDialog(null, "Proyecto creado en: " + file.getAbsolutePath());

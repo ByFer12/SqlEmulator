@@ -26,7 +26,8 @@ public class Files extends javax.swing.JPanel {
     //public static boolean isSave = false;
 
     public static boolean modificado;
-Files f;
+    Files f;
+
     public Files() {
         initComponents();
         num = new NumeroLinea(areaCode);
@@ -105,7 +106,7 @@ Files f;
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jScrollPane1)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(416, Short.MAX_VALUE)
+                .addContainerGap(415, Short.MAX_VALUE)
                 .addComponent(cerrar)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(guardar)
@@ -124,7 +125,8 @@ Files f;
                     .addComponent(newFile, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(eliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 594, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 462, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(132, 132, 132))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -135,7 +137,9 @@ Files f;
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 489, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 6, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -175,11 +179,11 @@ Files f;
     }//GEN-LAST:event_guardarActionPerformed
 
     private void newFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newFileActionPerformed
-        
+
         String path = Inicio.ruta;
         System.out.println("Ruta dentro del Nuevo: " + path);
         String nombre = JOptionPane.showInputDialog("Ingrese el nombre del archivo");
-        String newPath = path + "/" + nombre + ".txt";
+        String newPath = path + "/" + nombre + OpenClosedFiles.extension;
         String Original = Inicio.isnew ? path : newPath;
 
         try {
@@ -189,12 +193,12 @@ Files f;
                 String[] update = path.split("/");
                 System.out.println("Ruta dentro del Nuevo: " + newPath);
                 Inicio.Arbol(update);
-                
+
                 Inicio.arbolDirectorio.updateUI();
-                
+
                 //f=new Files();
                 //Inicio.tabbed1.addTab(nombre+".txt", Inicio.frame);
-               // Inicio.tabbed1.setSelectedComponent(tabbed1.getComponent(tabbed1.getSelectedIndex()));
+                // Inicio.tabbed1.setSelectedComponent(tabbed1.getComponent(tabbed1.getSelectedIndex()));
                 Inicio.isnew = false;
             }
         } catch (IOException ex) {
@@ -211,7 +215,7 @@ Files f;
         try {
             // String pathOrigin = Inicio.iscreates ? path : newPath;
             OpenClosedFiles.eliminarArchivo(newPath);
-            String update[]=path.split("/");
+            String update[] = path.split("/");
             Inicio.Arbol(update);
             Inicio.arbolDirectorio.updateUI();
             JOptionPane.showMessageDialog(null, "Eliminado correctamente");
