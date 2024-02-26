@@ -1,2 +1,8 @@
-/home/tuxrex/NetBeansProjects/Web/SQLemulator/src/main/java/com/mycompany/sqlemulator/SQLemulator.java
-/home/tuxrex/NetBeansProjects/Web/SQLemulator/src/main/java/com/mycompany/sqlemulator/view/Inicio.java
+/home/tuxrex/NetBeansProjects/Web/SQLemulator/src/main/java/inicio/view/Files.java
+/home/tuxrex/NetBeansProjects/Web/SQLemulator/src/main/java/inicio/Principal.java
+/home/tuxrex/NetBeansProjects/Web/SQLemulator/src/main/java/inicio/view/NumeroLinea.java
+/home/tuxrex/NetBeansProjects/Web/SQLemulator/src/main/java/inicio/flexycup/ContadorOperaciones.java
+/home/tuxrex/NetBeansProjects/Web/SQLemulator/src/main/java/inicio/flexycup/parser.java
+/home/tuxrex/NetBeansProjects/Web/SQLemulator/src/main/java/inicio/flexycup/sym.java
+/home/tuxrex/NetBeansProjects/Web/SQLemulator/src/main/java/inicio/view/Inicio.java
+/home/tuxrex/NetBeansProjects/Web/SQLemulator/src/main/java/inicio/flexycup/ContadorOperacionesLexer.java

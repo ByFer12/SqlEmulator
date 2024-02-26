@@ -1,0 +1,92 @@
+package inicio.flexycup;
+
+import java_cup.runtime.*;
+
+
+parser code {:
+    // Connect this parser to a scanner!
+    public ContadorOperacionesParser(ContadorOperacionesLexer lex) {
+	    super(lex);
+	  }
+
+private ContadorOperaciones contador = new ContadorOperaciones();
+
+public ContadorOperaciones getContador() {
+    return contador;
+}
+
+public void syntax_error(Symbol cur_token) {
+            System.out.println("Simbolo con error:" + symbl_name_from_id(cur_token.sym));
+            System.out.println("Linea " + cur_token.left);
+            System.out.println("Columna " + cur_token.right);
+            if (expected_token_ids().isEmpty()) {
+                System.out.println("ya no se esperaba ningun simbolo");
+            }
+        }
+/*
+public void unrecovered_syntax_error(Symbol cur_token) {
+            System.out.println("Error irrecuperable sobrecargado");
+        }*/
+:}
+
+/* Terminals (tokens returned by the scanner). */
+terminal            P_COMA, SUMA, RESTA, DIVISION, MULTIPLICACION;
+terminal Integer    ENTERO;
+
+/* Non-terminals */
+non terminal                         operacion;
+non terminal String                  simbolo;
+non terminal ContadorOperaciones     operaciones;
+
+
+/* The grammar */
+
+
+start with operaciones;
+
+operaciones ::= operacion P_COMA operaciones        {: RESULT = contador; :}
+                | operacion                         {: RESULT = contador; :}
+                ;
+
+operacion   ::= ENTERO:e1 simbolo:sim ENTERO:e2     {: System.out.println("resultado: " ); 
+                                                    double resultado = 0;
+                                                    switch(sim) {
+                                                        case "s":
+                                                        resultado = e1 + e2;
+                                                        break;
+                                                        case "r":
+                                                        resultado = e1 - e2;
+                                                        break;
+                                                        case "d":
+                                                        resultado = e1 / e2;
+                                                        break;
+                                                        case "m":
+                                                        resultado = e1 * e2;
+                                                        break;
+                                                    }
+                                                    System.out.println(resultado);
+                                                :}
+                | error:er         {: /* no es necesario el manejo ya que estamos usando el syntax_error */:}
+                ;
+
+simbolo     ::= SUMA:s           {: System.out.println("Se econtro una suma: linea" + sleft + " column " + sright);  contador.incrementarSumas(); RESULT = "s";:}
+                | RESTA:r             {: System.out.println("Se econtro una resta" + r);  contador.incrementarRestas(); RESULT = "r"; :}
+                | DIVISION:d          {: System.out.println("Se econtro una division" + d);  contador.incrementarDiv(); RESULT = "d"; :}
+                | MULTIPLICACION:m    {: System.out.println("Se econtro una multiplicacion" + m);  contador.incrementarMult(); RESULT = "m"; :}
+               /* | error*/
+                ;
+
+
+
+/*
+operaciones -> operacion ; operaciones
+            | operacion
+
+operacion -> ENTERO simbolo ENTERO
+
+simbolo -> SUMA
+        | RESTA
+        | DIVISION
+        | MULTIPLICACION
+
+*/
