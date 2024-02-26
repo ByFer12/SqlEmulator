@@ -36,16 +36,16 @@ public class Inicio extends javax.swing.JFrame {
     /**
      * Creates new form Inicio
      */
-    File ficheroExt;
+    static File ficheroExt;
     Files frame;
-    public static String ruta="";
-    public static String nombre="";
+    public static String ruta = "";
+    public static String nombre = "";
+    public static boolean isnew = false;
 
     public Inicio() {
         initComponents();
 
         arbolDirectorio.addTreeSelectionListener(new TreeSelectionListener() {
- 
 
             @Override
             public void valueChanged(TreeSelectionEvent tse) {
@@ -60,12 +60,11 @@ public class Inicio extends javax.swing.JFrame {
                         tabbed1.addTab(archivo, frame);
                         tabbed1.setSelectedComponent(frame);
                         OpenClosedFiles.leerArchivo(ruta + "/" + tabbed1.getTitleAt(tabbed1.getSelectedIndex()));
-                    nombre=archivo;
-                       
+                        nombre = archivo;
+
                         System.out.println(tabbed1.getTitleAt(tabbed1.getSelectedIndex()));
                         System.out.println("Nombre: " + tabbed1.getTabCount());
                         System.out.println("Ruta de archivo seleccionado: " + ruta + "/" + tabbed1.getTitleAt(tabbed1.getSelectedIndex()));
-          
 
                     }
                 } catch (Exception e) {
@@ -77,10 +76,7 @@ public class Inicio extends javax.swing.JFrame {
 
         });
 
-
     }
-
-
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -284,30 +280,35 @@ public class Inicio extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextPane2KeyPressed
 
     private void newProjectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newProjectActionPerformed
-                        String nombreCarpeta = JOptionPane.showInputDialog("Ingrese el nombre de la carpeta para el proyecto:");
-                String nombreArchivo = JOptionPane.showInputDialog("Ingrese el nombre del archivo del proyecto:");
+        String nombreCarpeta = JOptionPane.showInputDialog("Ingrese el nombre de la carpeta para el proyecto:");
+        String nombreArchivo = JOptionPane.showInputDialog("Ingrese el nombre del archivo del proyecto:");
 
-                JFileChooser fileChooser = new JFileChooser();
-                fileChooser.setDialogTitle("Selecciona la carpeta donde se creará el proyecto");
-                fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Selecciona la carpeta donde se creará el proyecto");
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-                int result = fileChooser.showOpenDialog(Inicio.this);
+        int result = fileChooser.showOpenDialog(Inicio.this);
 
-                if (result == JFileChooser.APPROVE_OPTION) {
-                    File selectedFolder = fileChooser.getSelectedFile();
-                    File carpetaProyecto = new File(selectedFolder, nombreCarpeta);
-                    carpetaProyecto.mkdir();
-                    ruta = OpenClosedFiles.crearArchivoProyecto(carpetaProyecto, nombreArchivo);
-                    System.out.println("path elegido: " + ruta);
-                    String rutas[] = ruta.split("/");
-                    iscreates = true;
-                    Arbol(rutas);
-                }
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File selectedFolder = fileChooser.getSelectedFile();
+          
+            File carpetaProyecto = new File(selectedFolder, nombreCarpeta);
+            carpetaProyecto.mkdir();
+            
+            String rutaAux = OpenClosedFiles.crearArchivoProyecto(carpetaProyecto, nombreArchivo).getAbsolutePath();
+              this.ficheroExt = carpetaProyecto;
+            int posicion = rutaAux.lastIndexOf("/");
+            this.ruta =  carpetaProyecto.getAbsolutePath(); //rutaAux.substring(0, posicion);
+            System.out.println("path elegido: " + ruta);
+            String rutas[] = ruta.split("/");
+            iscreates = true;
+            isnew = true;
+            Arbol(rutas);
+        }
 
     }//GEN-LAST:event_newProjectActionPerformed
 
-
-    private void Arbol(String[] carp) {
+    public static void Arbol(String[] carp) {
         root = new DefaultMutableTreeNode(carp[3]);
         modelo = new DefaultTreeModel(root);
         Crear(root, carp);
@@ -315,7 +316,7 @@ public class Inicio extends javax.swing.JFrame {
 
     }
 
-    private void Crear(DefaultMutableTreeNode nodo, String[] carpi) {
+    public static void Crear(DefaultMutableTreeNode nodo, String[] carpi) {
         //File[] subfolder = carpeta.listFiles();
         DefaultMutableTreeNode childNode;
         String[] carp = carpi;
@@ -331,21 +332,20 @@ public class Inicio extends javax.swing.JFrame {
                 nodo = childNode;
 
             }
-            if (!iscreates) {
-                File[] ficheros = ficheroExt.listFiles();
+            //   if (!iscreates) {
+            File[] ficheros = ficheroExt.listFiles();
 
-                if (ficheros != null) {
-                    for (File f : ficheros) {
+            if (ficheros != null) {
+                for (File f : ficheros) {
 
-                        childNode = new DefaultMutableTreeNode(f.getName());
-                        modelo.insertNodeInto(childNode, nodo, 0);
+                    childNode = new DefaultMutableTreeNode(f.getName());
+                    modelo.insertNodeInto(childNode, nodo, 0);
 
-                    }
                 }
-
             }
-                    //iscreates = false;
 
+            //}
+            //iscreates = false;
         }
 
     }
@@ -355,8 +355,8 @@ public class Inicio extends javax.swing.JFrame {
      * @param args the command line arguments
      */
 //    private List<File> carpetasAbiertas = new ArrayList<>();
-    private DefaultMutableTreeNode root;
-    private DefaultTreeModel modelo;
+    private static DefaultMutableTreeNode root;
+    private static DefaultTreeModel modelo;
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public static javax.swing.JTree arbolDirectorio;

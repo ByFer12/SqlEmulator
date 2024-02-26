@@ -22,6 +22,7 @@ public class Files extends javax.swing.JPanel {
 
     NumeroLinea num;
     //public static boolean isSave = false;
+    
     public static boolean modificado;
 
     public Files() {
@@ -148,8 +149,9 @@ public class Files extends javax.swing.JPanel {
         String path = Inicio.ruta;
         String newPath = path + "/" + Inicio.nombre;
         String pathOrigin = Inicio.iscreates ? path : newPath;
+        System.out.println("Path de Guardar "+pathOrigin);
         try {
-            OpenClosedFiles.guardarArchivo(code, pathOrigin);
+            OpenClosedFiles.guardarArchivo(code, newPath);
             JOptionPane.showMessageDialog(null, "Guardado correctamente");
             Inicio.iscreates = false;
             modificado=false;
@@ -160,14 +162,22 @@ public class Files extends javax.swing.JPanel {
     }//GEN-LAST:event_guardarActionPerformed
 
     private void newFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newFileActionPerformed
+
         String path = Inicio.ruta;
+        System.out.println("Ruta dentro del Nuevo: "+path);
         String nombre = JOptionPane.showInputDialog("Ingrese el nombre del archivo");
-        String originPath = path + "/" + nombre + ".txt";
+        String newPath = path + "/" + nombre + ".txt";
+        String Original=Inicio.isnew?path:newPath;
+
         try {
             if(nombre!=null){
-                OpenClosedFiles.createFile(originPath);
+                OpenClosedFiles.createFile(newPath);
             JOptionPane.showMessageDialog(null, "Archivo creado correctaente con el nombre de: " + nombre);
+            String []update=path.split("/");
+                System.out.println("Ruta dentro del Nuevo: "+newPath);
+            Inicio.Arbol(update);
             Inicio.arbolDirectorio.updateUI();
+                Inicio.isnew=false;
             }
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(null, "No se ha podido crear el archivo");
