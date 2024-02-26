@@ -37,7 +37,7 @@ public class Inicio extends javax.swing.JFrame {
      * Creates new form Inicio
      */
     static File ficheroExt;
-    Files frame;
+    public static Files frame;
     public static String ruta = "";
     public static String nombre = "";
     public static boolean isnew = false;

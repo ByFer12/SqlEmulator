@@ -85,4 +85,14 @@ public class OpenClosedFiles {
             }
         
     }
+    
+    public static void eliminarArchivo(String path)throws IOException{
+        File fi=new File(path);
+        if(fi.delete()){
+            
+        }else{
+            System.out.println("No se pudo eliminar");
+        }
+        
+    }
 }
