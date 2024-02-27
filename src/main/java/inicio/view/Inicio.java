@@ -5,12 +5,7 @@
 package inicio.view;
 
 import inicio.utils.OpenClosedFiles;
-import java.awt.List;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.io.BufferedReader;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileReader;
@@ -21,9 +16,15 @@ import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 /**
  *
@@ -36,7 +37,7 @@ public class Inicio extends javax.swing.JFrame {
     /**
      * Creates new form Inicio
      */
-    static File ficheroExt;
+    static File ideFile;
     public static Files frame;
     public static String ruta = "";
     public static String nombre = "";
@@ -45,36 +46,36 @@ public class Inicio extends javax.swing.JFrame {
     public Inicio() {
         initComponents();
 
-        arbolDirectorio.addTreeSelectionListener(new TreeSelectionListener() {
-
-            @Override
-            public void valueChanged(TreeSelectionEvent tse) {
-                try {
-                    //arbolDirectorio.getLastSelectedPathComponent().toString();
-                    String archivo = arbolDirectorio.getLastSelectedPathComponent().toString();
-                    frame = new Files();
-                    //frame.setVisible(true);
-
-                    if (archivo.contains(".")) {
-
-                        tabbed1.addTab(archivo, frame);
-                        tabbed1.setSelectedComponent(frame);
-                        OpenClosedFiles.leerArchivo(ruta + "/" + tabbed1.getTitleAt(tabbed1.getSelectedIndex()));
-                        nombre = archivo;
-
-                        System.out.println(tabbed1.getTitleAt(tabbed1.getSelectedIndex()));
-                        System.out.println("Nombre: " + tabbed1.getTabCount());
-                        System.out.println("Ruta de archivo seleccionado: " + ruta + "/" + tabbed1.getTitleAt(tabbed1.getSelectedIndex()));
-
-                    }
-                } catch (Exception e) {
-                    //JOptionPane.showMessageDialog(null, "No se ha seleccionado la carpeta, vuelve a intentarlo");
-
-                }
-
-            }
-
-        });
+//        arbolDirectorio.addTreeSelectionListener(new TreeSelectionListener() {
+//
+//            @Override
+//            public void valueChanged(TreeSelectionEvent tse) {
+//                try {
+//                    //arbolDirectorio.getLastSelectedPathComponent().toString();
+//                    String archivo = arbolDirectorio.getLastSelectedPathComponent().toString();
+//                    frame = new Files();
+//                    //frame.setVisible(true);
+//
+//                    if (archivo.contains(".")) {
+//
+//                        tabbed1.addTab(archivo, frame);
+//                        tabbed1.setSelectedComponent(frame);
+//                        OpenClosedFiles.leerArchivo(ruta + "/" + tabbed1.getTitleAt(tabbed1.getSelectedIndex()));
+//                        nombre = archivo;
+//
+//                        System.out.println(tabbed1.getTitleAt(tabbed1.getSelectedIndex()));
+//                        System.out.println("Nombre: " + tabbed1.getTabCount());
+//                        System.out.println("Ruta de archivo seleccionado: " + ruta + "/" + tabbed1.getTitleAt(tabbed1.getSelectedIndex()));
+//
+//                    }
+//                } catch (Exception e) {
+//                    //JOptionPane.showMessageDialog(null, "No se ha seleccionado la carpeta, vuelve a intentarlo");
+//
+//                }
+//
+//            }
+//
+//        });
 
     }
 
@@ -259,16 +260,16 @@ public class Inicio extends javax.swing.JFrame {
         //int seleccion=0;
 
         JFileChooser abrirDirectorio = new JFileChooser();
+        FileNameExtensionFilter filtrar= new FileNameExtensionFilter("Solo archivos ide","ide");
+        abrirDirectorio.setFileFilter(filtrar);
         abrirDirectorio.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         int seleccion = abrirDirectorio.showOpenDialog(this);
 
         if (seleccion == abrirDirectorio.APPROVE_OPTION) {
-            ficheroExt = abrirDirectorio.getSelectedFile();
-            ruta = ficheroExt.getAbsolutePath();
-            System.out.println("Ruta: " + ruta);
-            String[] carp = ruta.split("/");
-
-            Arbol(carp);
+            ideFile = abrirDirectorio.getSelectedFile();
+             raiz= cargarEstructuraProyecto(ideFile);
+             modelo=new DefaultTreeModel(raiz);
+             arbolDirectorio.setModel(modelo);
 
         } else {
             JOptionPane.showMessageDialog(null, "No se selecciono ninguna carpeta");
@@ -292,62 +293,52 @@ public class Inicio extends javax.swing.JFrame {
         if (result == JFileChooser.APPROVE_OPTION) {
             File selectedFolder = fileChooser.getSelectedFile();
           
-            File carpetaProyecto = new File(selectedFolder, nombreCarpeta);
-            carpetaProyecto.mkdir();
-            
-            String rutaAux = OpenClosedFiles.crearArchivoProyecto(carpetaProyecto, nombreArchivo).getAbsolutePath();
-              this.ficheroExt = carpetaProyecto;
-            int posicion = rutaAux.lastIndexOf("/");
-            this.ruta =  carpetaProyecto.getAbsolutePath(); //rutaAux.substring(0, posicion);
-            System.out.println("path elegido: " + ruta);
-            String rutas[] = ruta.split("/");
-            iscreates = true;
-            isnew = true;
-            Arbol(rutas);
+
         }
 
     }//GEN-LAST:event_newProjectActionPerformed
 
-    public static void Arbol(String[] carp) {
-        root = new DefaultMutableTreeNode(carp[3]);
-        modelo = new DefaultTreeModel(root);
-        Crear(root, carp);
-        arbolDirectorio.setModel(modelo);
-
+    public DefaultMutableTreeNode cargarEstructuraProyecto(File idFile){
+        DefaultMutableTreeNode raiz=null;
+        try{
+            DocumentBuilderFactory dbFactory=DocumentBuilderFactory.newInstance();
+            DocumentBuilder dbBuilder=dbFactory.newDocumentBuilder();
+            Document doc =dbBuilder.parse(idFile);
+            doc.getDocumentElement().normalize();
+            
+            //Obtener el nodo de la raiz del proyecto
+            Element proyecto=(Element)doc.getElementsByTagName("PROYECTO").item(0); 
+            raiz=new DefaultMutableTreeNode(proyecto.getAttribute("nombre"));
+            
+            //Procesar archivos y carpetas
+            processNode(proyecto, raiz);
+        }catch(Exception e){
+            
+        }
+        return raiz;
     }
-
-    public static void Crear(DefaultMutableTreeNode nodo, String[] carpi) {
-        //File[] subfolder = carpeta.listFiles();
-        DefaultMutableTreeNode childNode;
-        String[] carp = carpi;
-
-        File file;
-        if (carp.length > 0) {
-            //int cont=0;
-            for (int i = 4; i < carp.length; i++) {
-                file = new File(carp[i]);
-
-                childNode = new DefaultMutableTreeNode(file.getName());
-                modelo.insertNodeInto(childNode, nodo, 0);
-                nodo = childNode;
-
-            }
-            //   if (!iscreates) {
-            File[] ficheros = ficheroExt.listFiles();
-
-            if (ficheros != null) {
-                for (File f : ficheros) {
-
-                    childNode = new DefaultMutableTreeNode(f.getName());
-                    modelo.insertNodeInto(childNode, nodo, 0);
-
-                }
-            }
-
-            //}
-            //iscreates = false;
+    
+        private static void processNode(Element element, DefaultMutableTreeNode parent) {
+        // Procesar todos los archivos en el nodo actual
+        NodeList archivos = element.getElementsByTagName("ARCHIVO");
+        for (int i = 0; i < archivos.getLength(); i++) {
+            Element archivo = (Element) archivos.item(i);
+            String nombreArchivo = new File(archivo.getAttribute("nombre")).getName();
+            DefaultMutableTreeNode fileNode = new DefaultMutableTreeNode(nombreArchivo);
+            parent.add(fileNode);
         }
 
+        // Procesar todas las carpetas en el nodo actual
+        NodeList carpetas = element.getElementsByTagName("CARPETA");
+        for (int i = 0; i < carpetas.getLength(); i++) {
+            Element carpeta = (Element) carpetas.item(i);
+            String nombreCarpeta = carpeta.getAttribute("nombre");
+            DefaultMutableTreeNode folderNode = new DefaultMutableTreeNode(nombreCarpeta);
+            parent.add(folderNode);
+  
+            // Recursividad para subcarpetas y archivos dentro de esta carpeta
+            processNode(carpeta, folderNode);
+        }
     }
     /**
      * z
@@ -355,7 +346,7 @@ public class Inicio extends javax.swing.JFrame {
      * @param args the command line arguments
      */
 //    private List<File> carpetasAbiertas = new ArrayList<>();
-    private static DefaultMutableTreeNode root;
+    private static DefaultMutableTreeNode raiz;
     private static DefaultTreeModel modelo;
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
