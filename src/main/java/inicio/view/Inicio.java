@@ -4,6 +4,7 @@
  */
 package inicio.view;
 
+import inicio.utils.ManageFilesAndDirectories;
 import inicio.utils.OpenClosedFiles;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -65,12 +66,12 @@ public class Inicio extends javax.swing.JFrame {
     public static DocumentBuilderFactory dbFactory;
     private static DocumentBuilder dbBuilder;
     public static Document doc;
-
+    public  NuevoProyecto nuevoProyect;           
     public Inicio() {
         //String rutaSelect="";
         int posicion = 0;
         initComponents();
-
+        nuevoProyect=new NuevoProyecto();
         arbolDirectorio.addTreeSelectionListener(new TreeSelectionListener() {
 
             @Override
@@ -124,8 +125,15 @@ public class Inicio extends javax.swing.JFrame {
                             menu.add(opciones);
                             administrarCarpetasArchivos(opciones, selectedNode.toString());
 
+                        } else if (selectedNode.toString().equals("project")) {
+                            opciones = new JMenuItem("Crear Carpeta");
+
+                            menu.add(opciones);
+
+                            administrarCarpetasArchivos(opciones, selectedNode.toString());
+
                         } else {
-                            
+
                             opciones = new JMenuItem("Crear Carpeta");
 
                             menu.add(opciones);
@@ -155,240 +163,20 @@ public class Inicio extends javax.swing.JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (accion.getActionCommand().equals("Crear Carpeta")) {
-                    crearCarpeta(selectedNode);
+                    ManageFilesAndDirectories.crearCarpeta(selectedNode);
                 } else if (accion.getActionCommand().equals("Crear Archivo")) {
-                    crearArbolArchivo(selectedNode);
+                    ManageFilesAndDirectories.crearArbolArchivo(selectedNode);
 
-                } else if (accion.getActionCommand().equals("Eliminar")) {
-                    eliminarArbol(selectedNode);
+                } else if (accion.getActionCommand().equals("Eliminar Archivo")) {
+                    ManageFilesAndDirectories.eliminarArbol(selectedNode);
 
                 } else if (accion.getActionCommand().equals("Eliminar Carpeta")) {
-                    eliminarCarpeta(selectedNode);
+                    ManageFilesAndDirectories.eliminarCarpeta(selectedNode);
                 }
 
             }
         });
 
-    }
-
-    public void eliminarCarpeta(String selectedDirectory) {
-        Element padre;
-        NodeList archivos = doc.getElementsByTagName("CARPETA");
-        for (int i = 0; i < archivos.getLength(); i++) {
-            Element carpeta = (Element) archivos.item(i);
-            padre = (Element) carpeta.getParentNode();
-            if (selectedDirectory.equals(carpeta.getAttribute("nombre"))) {
-                padre.removeChild(carpeta);
-                break;
-            }
-        }
-
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        Transformer transformer = null;
-        try {
-            transformer = transformerFactory.newTransformer();
-        } catch (TransformerConfigurationException ex) {
-            Logger.getLogger(Inicio.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        DOMSource source = new DOMSource(doc);
-
-        // Puedes ajustar la ruta del carpeta según tu caso
-        StreamResult result = new StreamResult(new java.io.File("../../../SQLemulator/proyecto.ide"));
-        try {
-            transformer.transform(source, result);
-        } catch (TransformerException ex) {
-            Logger.getLogger(Inicio.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        JOptionPane.showMessageDialog(null, "Eliminado correctamente");
-
-        raiz = cargarEstructuraProyecto(ideFile);
-        modelo = new DefaultTreeModel(raiz);
-        arbolDirectorio.setModel(modelo);
-        arbolDirectorio.updateUI();
-
-    }
-
-    public void eliminarArbol(String selectArchive) {
-        if (OpenClosedFiles.eliminar()) {
-            //obtiene los archivos del documento
-            Element padre;
-            NodeList archivos = doc.getElementsByTagName("ARCHIVO");
-            for (int i = 0; i < archivos.getLength(); i++) {
-                Element archivo = (Element) archivos.item(i);
-                padre = (Element) archivo.getParentNode();
-                if (selectArchive.equals(new File(archivo.getAttribute("ubicacion")).getName())) {
-                    padre.removeChild(archivo);
-                    break;
-                }
-            }
-
-            TransformerFactory transformerFactory = TransformerFactory.newInstance();
-            Transformer transformer = null;
-            try {
-                transformer = transformerFactory.newTransformer();
-            } catch (TransformerConfigurationException ex) {
-                Logger.getLogger(Inicio.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            DOMSource source = new DOMSource(doc);
-
-            // Puedes ajustar la ruta del carpeta según tu caso
-            StreamResult result = new StreamResult(new java.io.File("../../../SQLemulator/proyecto.ide"));
-            try {
-                transformer.transform(source, result);
-            } catch (TransformerException ex) {
-                Logger.getLogger(Inicio.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-            JOptionPane.showMessageDialog(null, "Eliminado correctamente");
-
-            raiz = cargarEstructuraProyecto(ideFile);
-            modelo = new DefaultTreeModel(raiz);
-            arbolDirectorio.setModel(modelo);
-            arbolDirectorio.updateUI();
-
-        } else {
-            JOptionPane.showMessageDialog(null, "No se ha podido eliminar el archivo");
-
-        }
-
-    }
-
-    public void crearCarpeta(String slectFile) {
-        boolean existe = false;
-
-        String name = JOptionPane.showInputDialog("Ingrese el nombre de la carpeta");
-        if (name != null) {
-            //System.out.println("Path crearArbo: " + path + "/" + name);
-            Element newCarpeta = doc.createElement("CARPETA");
-            newCarpeta.setAttribute("nombre", name);
-            Text nodo;
-            NodeList carpetas = doc.getElementsByTagName("CARPETA");
-
-            for (int i = 0; i < carpetas.getLength(); i++) {
-                Element carpeta = (Element) carpetas.item(i);
-
-                if (name.equals(carpeta.getAttribute("nombre"))) {
-                    existe = true;
-                    break;
-                }
-            }
-
-            if (!existe) {
-                // Buscar la carpeta por su nombre (puedes ajustar según tu estructura)
-                for (int i = 0; i < carpetas.getLength(); i++) {
-                    Element carpeta = (Element) carpetas.item(i);
-
-                    if (slectFile.equals(carpeta.getAttribute("nombre"))) {
-                        nodo = doc.createTextNode("");
-                        newCarpeta.appendChild(nodo);
-                        carpeta.appendChild(newCarpeta);
-                        break;
-                    }
-                }
-            } else {
-                JOptionPane.showMessageDialog(null, "La carpeta ya existe");
-            }
-
-            TransformerFactory transformerFactory = TransformerFactory.newInstance();
-            Transformer transformer = null;
-            try {
-                transformer = transformerFactory.newTransformer();
-            } catch (TransformerConfigurationException ex) {
-                Logger.getLogger(Inicio.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            DOMSource source = new DOMSource(doc);
-
-            // Puedes ajustar la ruta del carpeta según tu caso
-            StreamResult result = new StreamResult(new java.io.File("../../../SQLemulator/proyecto.ide"));
-            try {
-                transformer.transform(source, result);
-            } catch (TransformerException ex) {
-                Logger.getLogger(Inicio.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-            if (!existe) {
-                JOptionPane.showMessageDialog(null, "Creado correctamente");
-            }
-
-            raiz = cargarEstructuraProyecto(ideFile);
-            modelo = new DefaultTreeModel(raiz);
-            arbolDirectorio.setModel(modelo);
-            arbolDirectorio.updateUI();
-        }
-
-    }
-
-    public void crearArbolArchivo(String nomCarp) {
-        boolean existe = false;
-        String naame = OpenClosedFiles.crearArchivo();
-        if (naame != null) {
-            String other = ideFile.getAbsolutePath();
-            int position = other.lastIndexOf("/");
-            String path = other.substring(0, position);
-            System.out.println("Path crearArbo: " + path + "/" + naame + ".csv");
-
-            Element newArchivo = doc.createElement("ARCHIVO");
-            newArchivo.setAttribute("nombre", naame);
-            newArchivo.setAttribute("ubicacion", path + "/" + naame + ".csv");
-
-            // Obtener la lista de todas las carpetas en el documento
-            NodeList carpetas = doc.getElementsByTagName("CARPETA");
-            for (int i = 0; i < carpetas.getLength(); i++) {
-                Element carpeta = (Element) carpetas.item(i);
-
-                if (naame.equals(carpeta.getAttribute("nombre"))) {
-                    existe = true;
-                    break;
-                }
-            }
-            // Buscar la carpeta por su nombre (puedes ajustar según tu estructura)
-            Element carpetaElegida = null;
-            if (!existe) {
-                for (int i = 0; i < carpetas.getLength(); i++) {
-                    Element carpeta = (Element) carpetas.item(i);
-                    if (nomCarp.equals(carpeta.getAttribute("nombre"))) {
-                        carpetaElegida = carpeta;
-                        break;
-                    }
-                }
-            } else {
-                JOptionPane.showMessageDialog(null, "El archivo ya existe");
-            }
-
-            if (carpetaElegida != null) {
-                // Agregar el nuevo carpeta como hijo de la carpeta "Byron"
-                carpetaElegida.appendChild(newArchivo);
-
-                // Guardar los cambios de vuelta al carpeta XML
-                TransformerFactory transformerFactory = TransformerFactory.newInstance();
-                Transformer transformer = null;
-                try {
-                    transformer = transformerFactory.newTransformer();
-                } catch (TransformerConfigurationException ex) {
-                    Logger.getLogger(Inicio.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                DOMSource source = new DOMSource(doc);
-
-                // Puedes ajustar la ruta del carpeta según tu caso
-                StreamResult result = new StreamResult(new java.io.File("../../../SQLemulator/proyecto.ide"));
-                try {
-                    transformer.transform(source, result);
-                } catch (TransformerException ex) {
-                    Logger.getLogger(Inicio.class.getName()).log(Level.SEVERE, null, ex);
-                }
-
-                JOptionPane.showMessageDialog(null, "Archivo creado correctaente con el nombre de: " + naame);
-
-            } else {
-                JOptionPane.showMessageDialog(null, "No se ha podido crear el archivo");
-            }
-
-            raiz = cargarEstructuraProyecto(ideFile);
-            modelo = new DefaultTreeModel(raiz);
-            arbolDirectorio.setModel(modelo);
-            arbolDirectorio.updateUI();
-        }
     }
 
     /**
@@ -593,23 +381,14 @@ public class Inicio extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextPane2KeyPressed
 
     private void newProjectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newProjectActionPerformed
-        String nombreCarpeta = JOptionPane.showInputDialog("Ingrese el nombre de la carpeta para el proyecto:");
-        String nombreArchivo = JOptionPane.showInputDialog("Ingrese el nombre del archivo del proyecto:");
-
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("Selecciona la carpeta donde se creará el proyecto");
-        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-
-        int result = fileChooser.showOpenDialog(Inicio.this);
-
-        if (result == JFileChooser.APPROVE_OPTION) {
-            File selectedFolder = fileChooser.getSelectedFile();
-
-        }
+       
+       nuevoProyect.setVisible(true);
+//
+//        }
 
     }//GEN-LAST:event_newProjectActionPerformed
 
-    public DefaultMutableTreeNode cargarEstructuraProyecto(File idFile) {
+    public static DefaultMutableTreeNode cargarEstructuraProyecto(File idFile) {
         DefaultMutableTreeNode raiz = null;
         try {
             dbFactory = DocumentBuilderFactory.newInstance();
@@ -635,7 +414,7 @@ public class Inicio extends javax.swing.JFrame {
         for (int i = 0; i < carpetas.getLength(); i++) {
             Element carpeta = (Element) carpetas.item(i);
             // Verificar que la carpeta sea un hijo directo del elemento actual
-            System.out.println("processNode: " + carpeta.getNodeName());
+            
             if (carpeta.getParentNode().equals(element)) {
                 String nombreCarpeta = carpeta.getAttribute("nombre");
                 DefaultMutableTreeNode folderNode = new DefaultMutableTreeNode(nombreCarpeta);
@@ -654,7 +433,7 @@ public class Inicio extends javax.swing.JFrame {
             if (archivo.getParentNode().equals(element)) {
                 String nombreArchivo = new File(archivo.getAttribute("ubicacion")).getName();
                 DefaultMutableTreeNode fileNode = new DefaultMutableTreeNode(nombreArchivo);
-                System.out.println("Archivos: " + nombreArchivo);
+              
                 parent.add(fileNode);
             }
         }
@@ -666,8 +445,8 @@ public class Inicio extends javax.swing.JFrame {
      * @param args the command line arguments
      */
 //    private List<File> carpetasAbiertas = new ArrayList<>();
-    private static DefaultMutableTreeNode raiz;
-    private static DefaultTreeModel modelo;
+    public static DefaultMutableTreeNode raiz;
+    public static DefaultTreeModel modelo;
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public static javax.swing.JTree arbolDirectorio;
