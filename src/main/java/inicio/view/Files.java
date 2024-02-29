@@ -64,8 +64,6 @@ public class Files extends javax.swing.JPanel {
         areaCode = new javax.swing.JTextPane();
         cerrar = new javax.swing.JButton();
         guardar = new javax.swing.JButton();
-        newFile = new javax.swing.JButton();
-        eliminar = new javax.swing.JButton();
 
         jButton1.setText("jButton1");
 
@@ -79,24 +77,10 @@ public class Files extends javax.swing.JPanel {
             }
         });
 
-        guardar.setText("Guardar");
+        guardar.setText("Guardar Cambios");
         guardar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 guardarActionPerformed(evt);
-            }
-        });
-
-        newFile.setText("Nuevo Archivo");
-        newFile.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                newFileActionPerformed(evt);
-            }
-        });
-
-        eliminar.setText("Eliminar");
-        eliminar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                eliminarActionPerformed(evt);
             }
         });
 
@@ -106,24 +90,18 @@ public class Files extends javax.swing.JPanel {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jScrollPane1)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(415, Short.MAX_VALUE)
+                .addContainerGap(526, Short.MAX_VALUE)
                 .addComponent(cerrar)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(guardar)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(newFile)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(eliminar)
-                .addContainerGap())
+                .addGap(44, 44, 44))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cerrar, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(guardar, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(newFile, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(eliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(guardar, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 462, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(132, 132, 132))
@@ -163,12 +141,14 @@ public class Files extends javax.swing.JPanel {
 
     private void guardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarActionPerformed
         String code = areaCode.getText();
-        String path = Inicio.ruta;
-        String newPath = path + "/" + Inicio.nombre;
-        String pathOrigin = Inicio.iscreates ? path : newPath;
-        System.out.println("Path de Guardar " + pathOrigin);
+        String other = Inicio.ideFile.getAbsolutePath();
+
+        int position = other.lastIndexOf("/");
+        String path = other.substring(0, position) + "/" + Inicio.nombre;
+
+        System.out.println("Path de Guardar " + path);
         try {
-            OpenClosedFiles.guardarArchivo(code, newPath);
+            OpenClosedFiles.guardarArchivo(code, path);
             JOptionPane.showMessageDialog(null, "Guardado correctamente");
             Inicio.iscreates = false;
             modificado = false;
@@ -178,61 +158,16 @@ public class Files extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_guardarActionPerformed
 
-    private void newFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newFileActionPerformed
+    
 
-        String path = Inicio.ruta;
-        System.out.println("Ruta dentro del Nuevo: " + path);
-        String nombre = JOptionPane.showInputDialog("Ingrese el nombre del archivo");
-        String newPath = path + "/" + nombre + OpenClosedFiles.extension;
-        String Original = Inicio.isnew ? path : newPath;
-
-        try {
-            if (nombre != null) {
-                OpenClosedFiles.createFile(newPath);
-                JOptionPane.showMessageDialog(null, "Archivo creado correctaente con el nombre de: " + nombre);
-                String[] update = path.split("/");
-                System.out.println("Ruta dentro del Nuevo: " + newPath);
-                Inicio.Arbol(update);
-
-                Inicio.arbolDirectorio.updateUI();
-
-                //f=new Files();
-                //Inicio.tabbed1.addTab(nombre+".txt", Inicio.frame);
-                // Inicio.tabbed1.setSelectedComponent(tabbed1.getComponent(tabbed1.getSelectedIndex()));
-                Inicio.isnew = false;
-            }
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(null, "No se ha podido crear el archivo");
-        }
-
-
-    }//GEN-LAST:event_newFileActionPerformed
-
-    private void eliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eliminarActionPerformed
-        String code = areaCode.getText();
-        String path = Inicio.ruta;
-        String newPath = path + "/" + Inicio.nombre;
-        try {
-            // String pathOrigin = Inicio.iscreates ? path : newPath;
-            OpenClosedFiles.eliminarArchivo(newPath);
-            String update[] = path.split("/");
-            Inicio.Arbol(update);
-            Inicio.arbolDirectorio.updateUI();
-            JOptionPane.showMessageDialog(null, "Eliminado correctamente");
-        } catch (IOException ex) {
-            System.out.println("Hubo problemas al eliminar el archivo");
-        }
-    }//GEN-LAST:event_eliminarActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public static javax.swing.JTextPane areaCode;
     private javax.swing.JButton cerrar;
-    private javax.swing.JButton eliminar;
     private javax.swing.JButton guardar;
     private javax.swing.JButton jButton1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JButton newFile;
     // End of variables declaration//GEN-END:variables
 }

@@ -96,4 +96,49 @@ public class OpenClosedFiles {
         }
         
     }
+    
+    public static String crearArchivo() {
+        String other = Inicio.ideFile.getAbsolutePath();
+        int position = other.lastIndexOf("/");
+        String path = other.substring(0, position);
+        System.out.println("Ruta dentro del Nuevo: " + path);
+        String nombre = JOptionPane.showInputDialog("Ingrese el nombre del archivo");
+        String newPath = path + "/" + nombre + OpenClosedFiles.extension;
+        String Original = Inicio.isnew ? path : newPath;
+
+        try {
+            if (nombre != null) {
+                OpenClosedFiles.createFile(newPath);
+                String[] update = path.split("/");
+                System.out.println("Ruta dentro del Nuevo: " + newPath);
+                //Inicio.Arbol(update);
+
+                Inicio.arbolDirectorio.updateUI();
+                Inicio.isnew = false;
+            }
+        } catch (IOException ex) {
+
+        }
+        return nombre;
+    }
+        public static boolean eliminar() {
+       
+        String other = Inicio.ideFile.getAbsolutePath();
+
+        int position = other.lastIndexOf("/");
+        String path = other.substring(0, position) + "/" + Inicio.nombre;
+        System.out.println("Achivo a eliminar: "+path);
+        try {
+            // String pathOrigin = Inicio.iscreates ? path : newPath;
+            OpenClosedFiles.eliminarArchivo(path);
+            String update[] = path.split("/");
+            // Inicio.Arbol(update);
+            Inicio.arbolDirectorio.updateUI();
+            return true;
+        } catch (IOException ex) {
+            System.out.println("Hubo problemas al eliminar el archivo");
+        }
+        return false;
+    }
+
 }
