@@ -14,6 +14,7 @@ import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultTreeModel;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
@@ -209,14 +210,17 @@ public class NuevoProyecto extends javax.swing.JFrame {
             selectedFolder = fileChooser.getSelectedFile();
             ubicacion.setText(selectedFolder.getAbsolutePath());
 
+        }else{
+            selectedFolder=null;
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void btnNewPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewPActionPerformed
-        String path = selectedFolder.getAbsolutePath();
         String nombre = nombreP1.getText();
         String carpeta = nombreC1.getText();
         String archivo = nombreA1.getText();
+        if(selectedFolder!=null&&!nombre.isEmpty()&&!carpeta.isEmpty()&&!archivo.isEmpty()){
+            String path = selectedFolder.getAbsolutePath();
         try {
             ManageFilesAndDirectories.crearProject(path, nombre, carpeta, archivo);
         } catch (ParserConfigurationException | TransformerConfigurationException  ex) {
@@ -231,6 +235,11 @@ public class NuevoProyecto extends javax.swing.JFrame {
          raiz = cargarEstructuraProyecto(ManageFilesAndDirectories.archivoNuevo);
             modelo = new DefaultTreeModel(raiz);
             arbolDirectorio.setModel(modelo);
+            
+            Inicio.rutaConsole.setText(path);
+        }else{
+            JOptionPane.showMessageDialog(null, "Debe ingresar todos los datos");
+        }
     }//GEN-LAST:event_btnNewPActionPerformed
 
     /**

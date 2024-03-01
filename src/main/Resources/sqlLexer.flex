@@ -8,17 +8,19 @@ import java_cup.runtime.*;
 
 /* opciones y declaraciones de jflex */
 
-%class ContadorOperacionesLexer
+%class SqlLexer
 %cup
 %line
 %column
+%cupsym Tokens
 
 LineTerminator = \r|\n|\r\n
 
 WhiteSpace = {LineTerminator} | [ \t\f]
 
 /* integer literals */
-entero = 0 | [1-9][0-9]*
+entero = [0-9]*
+letters=[a-zA-Z]
 
 
 %{
@@ -40,19 +42,19 @@ entero = 0 | [1-9][0-9]*
 %% // separador de areas
 
 /* reglas lexicas */
+<YYINITIAL>{
 
+	"SELECCIONAR"		{ return symbol(sym.P_COMA); }
 
-	";"		{ return symbol(sym.P_COMA); }
+	"EN"	{ return symbol(sym.ENTERO, new Integer(yytext()));}
 
-	{entero}	{ return symbol(sym.ENTERO, new Integer(yytext()));}
+	"FILTRAR"		{ return symbol(sym.SUMA);}
 
-	"+"		{ return symbol(sym.SUMA);}
+	"="		{ return symbol(sym.RESTA);}
 
-	"-"		{ return symbol(sym.RESTA);}
+    ","		{ return symbol(sym.DIVISION);}
 
-        "/"		{ return symbol(sym.DIVISION);}
-
-        "*"		{ return symbol(sym.MULTIPLICACION);}
+    "*"		{ return symbol(sym.MULTIPLICACION);}
 
 	{WhiteSpace} 	{/* ignoramos */}
 
@@ -63,3 +65,4 @@ entero = 0 | [1-9][0-9]*
                                                               "\" at line "+yyline+", column "+yycolumn); }*/
 			{error("Simbolo invalido <"+ yytext()+">");}
 <<EOF>>                 { return symbol(sym.EOF); }
+      }
