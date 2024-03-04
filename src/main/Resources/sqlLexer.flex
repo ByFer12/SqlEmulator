@@ -2,7 +2,9 @@
 /* codigo de usuario */
 package inicio.flexycup;
 
-import java_cup.runtime.*;import java.util.LinkedList;
+import java_cup.runtime.*;
+import java.util.LinkedList;
+import inicio.view.Inicio;
 
 %% //separador de area
 
@@ -49,7 +51,7 @@ letters=[a-zA-Z]
 	"SELECCIONAR" { return symbol(sym.SELEC,yytext()); }
     "INSERTAR" { return symbol(sym.INSERT,yytext()); }
     "VALORES" { return symbol(sym.VALORES,yytext()); }
-
+      "ELIMINAR"     {return symbol(sym.ELIMINAR,yytext());}
 	"EN"	{ return symbol(sym.EN, yytext());}
 
 	"FILTRAR"		{ return symbol(sym.FILT, yytext());}
@@ -85,6 +87,9 @@ letters=[a-zA-Z]
     [^] {System.out.println("Error lexico: ");
       Errors e=new Errors(yytext(),"Error Lexico", "Este token no es reconocido",yyline,yycolumn);
       erroresLexicos.add(e);
+      Inicio.errores.setText("Error Lexico, token no reconocido: "+yytext()+" en fila: "+yyline+" y columna: "+yycolumn);
+      Inicio.errors=true;
+                 Inicio.btnErrors.setVisible(true);
       }
 
 

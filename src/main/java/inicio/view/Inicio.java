@@ -60,11 +60,13 @@ public class Inicio extends javax.swing.JFrame {
     private static DocumentBuilder dbBuilder;
     public static Document doc;
     public NuevoProyecto nuevoProyect;
+    public static boolean errors=false;
 
     public Inicio() {
-        //String rutaSelect="";
         int posicion = 0;
+        //String rutaSelect="";
         initComponents();
+        btnErrors.setVisible(false);
         nuevoProyect = new NuevoProyecto();
         arbolDirectorio.addTreeSelectionListener(new TreeSelectionListener() {
 
@@ -200,6 +202,7 @@ public class Inicio extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         errores = new javax.swing.JTextPane();
+        btnErrors = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         file = new javax.swing.JMenu();
         openFile = new javax.swing.JMenuItem();
@@ -275,7 +278,7 @@ public class Inicio extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 365, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(384, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -293,7 +296,19 @@ public class Inicio extends javax.swing.JFrame {
         jLabel2.setText("Resultado");
 
         errores.setEditable(false);
+        errores.setFont(new java.awt.Font("Liberation Sans", 3, 15)); // NOI18N
+        errores.setForeground(new java.awt.Color(204, 51, 0));
         jScrollPane2.setViewportView(errores);
+
+        btnErrors.setBackground(new java.awt.Color(255, 51, 51));
+        btnErrors.setFont(new java.awt.Font("Liberation Sans", 1, 16)); // NOI18N
+        btnErrors.setForeground(new java.awt.Color(102, 0, 0));
+        btnErrors.setText("Ver errores");
+        btnErrors.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnErrorsActionPerformed(evt);
+            }
+        });
 
         file.setText("Archivo");
         file.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -337,17 +352,18 @@ public class Inicio extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(pane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tabbed1, javax.swing.GroupLayout.DEFAULT_SIZE, 1259, Short.MAX_VALUE)
+                .addComponent(tabbed1)
                 .addGap(14, 14, 14))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane3)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(rutaConsole, javax.swing.GroupLayout.PREFERRED_SIZE, 543, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(rutaConsole, javax.swing.GroupLayout.PREFERRED_SIZE, 543, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane2))
+                        .addComponent(jScrollPane2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnErrors)))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(18, 18, 18)
@@ -378,7 +394,11 @@ public class Inicio extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(20, 20, 20)
+                                .addComponent(btnErrors)))
                         .addGap(44, 44, 44))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -432,6 +452,11 @@ public class Inicio extends javax.swing.JFrame {
 //
                 SqlLexer flexe = new SqlLexer(new BufferedReader(new StringReader(consult)));
                 parser pa = new parser(flexe);
+                if(errors){
+                    errors=false;
+                    btnErrors.setVisible(false);
+                    errores.setText("");
+                }
                 pa.parse();
                 
             } catch (FileNotFoundException ex) {
@@ -451,6 +476,12 @@ public class Inicio extends javax.swing.JFrame {
 //        }
 
     }//GEN-LAST:event_newProjectActionPerformed
+
+    private void btnErrorsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnErrorsActionPerformed
+        Errores er=new Errores();
+        er.setVisible(true);
+        er.setLocationRelativeTo(null);
+    }//GEN-LAST:event_btnErrorsActionPerformed
 
     public static DefaultMutableTreeNode cargarEstructuraProyecto(File idFile) {
         DefaultMutableTreeNode raiz = null;
@@ -514,8 +545,9 @@ public class Inicio extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public static javax.swing.JTree arbolDirectorio;
+    public static javax.swing.JButton btnErrors;
     private javax.swing.JTextPane consulta;
-    private javax.swing.JTextPane errores;
+    public static javax.swing.JTextPane errores;
     private javax.swing.JMenu file;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

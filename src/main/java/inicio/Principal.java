@@ -19,15 +19,15 @@ public class Principal {
 
     public static void main(String[] args) {
 //    pruebas();
-    gui();
+        gui();
 
     }
 
-    public static void pruebas(){
+    public static void pruebas() {
         String Sho = "SELECCIONAR nombre,edad EN hoas.asdsd FILTRAR asda=34;";
-        try{
-            SqlLexer flexe=new SqlLexer(new BufferedReader(new StringReader(Sho)));
-            parser pa=new parser(flexe);
+        try {
+            SqlLexer flexe = new SqlLexer(new BufferedReader(new StringReader(Sho)));
+            parser pa = new parser(flexe);
             pa.parse();
 
         } catch (FileNotFoundException ex) {
@@ -37,7 +37,7 @@ public class Principal {
         }
     }
 
-    public static void gui(){
+    public static void gui() {
         i = new Inicio();
         i.setVisible(true);
         i.setLocationRelativeTo(null);

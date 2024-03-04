@@ -80,7 +80,7 @@ public class SqlSelect {
                 tbModel.addRow(rowVector);
             }
         } catch (Exception e) {
-            System.out.println("No existe el archivo");
+            Inicio.errores.setText("El archivo al que accede no existe, verifique la ruta");
 
         }
 
@@ -134,7 +134,7 @@ public class SqlSelect {
                 tbModel.addRow(rowVector);
             }
         } catch (Exception e) {
-            System.out.println("No existe el archivo");
+            Inicio.errores.setText("El archivo al que accede no existe, verifique la ruta");
 
         }
 
@@ -192,7 +192,7 @@ public class SqlSelect {
                 }
             }
         } catch (Exception e) {
-            System.out.println("No existe el archivo");
+           Inicio.errores.setText("El archivo al que accede no existe, verifique la ruta");
 
         }
 
@@ -269,7 +269,7 @@ public class SqlSelect {
                 }
             }
         } catch (Exception e) {
-            System.out.println("No existe el archivo");
+            Inicio.errores.setText("El archivo al que accede no existe, verifique la ruta");
 
         }
 

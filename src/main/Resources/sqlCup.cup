@@ -4,6 +4,7 @@ import java_cup.runtime.*;
 import java.util.ArrayList;
 import java.util.List;
 import inicio.excecuteQuery.*;
+import inicio.view.Inicio;
 
 import java.util.LinkedList;
 parser code {:
@@ -23,7 +24,10 @@ parser code {:
            int columna=s.right;
            int fila=s.left;
            System.out.println("Error Sintactico: "+lexema+" en fila: "+fila+" y columna: "+columna);
+           Inicio.errores.setText("Error Sintactico: "+lexema+" en fila: "+fila+" y columna: "+columna);
+           Inicio.btnErrors.setVisible(true);
            Errors er=new Errors(lexema,"Error sintactico","No se esperaba ese tokenn",fila,columna);
+           Inicio.errors=true;
            erroresSintacticos.add(er);
         }
 
@@ -32,19 +36,22 @@ parser code {:
            int columna=s.right;
            int fila=s.left;
            System.out.println("Error Sintactico: "+lexema+" en fila: "+fila+" y columna: "+columna);
+           Inicio.errores.setText("Error Sintactico: "+lexema+" en fila: "+fila+" y columna: "+columna);
+           Inicio.btnErrors.setVisible(true);
            Errors er=new Errors(lexema,"Error sintactico","No se esperaba ese tokenn",fila,columna);
+           Inicio.errors=true;
            erroresSintacticos.add(er);
     }
 :}
 
 /* Terminals (tokens returned by the scanner). */
-terminal             SELEC,INSERT,VALORES,EN,FILT,OR,AND;
+terminal             SELEC,INSERT,VALORES,EN,FILT,OR,AND,ELIMINAR;
 terminal            NUM,ID,COMA,AST,PUNTO,STRING,IGUAL,PCOMA,MENIGUAL,MAYIGUAL,MAY,MEN,PARENA,PARENC;
 
 
 
 /* Non-terminals */
-non terminal     sql_query, column, direccion, condicion,sel,ins,valores;
+non terminal     sql_query, column, direccion, condicion,sel,ins,eli,valores;
 
 /* The grammar */
 
@@ -54,6 +61,7 @@ start with sql_query;
 
 sql_query::=sel
             |ins
+            |eli
             ;
 sel::=SELEC column:colu EN direccion FILT condicion PCOMA{:
                                                                     SqlSelect sel=new SqlSelect(col,path,cond);
@@ -66,6 +74,10 @@ sel::=SELEC column:colu EN direccion FILT condicion PCOMA{:
 
 ins::= INSERT EN direccion:d VALORES PARENA valores PARENC PCOMA {:SqlInsert insert=new SqlInsert(path,valores);:}
         |INSERT EN direccion PARENA column PARENC  VALORES PARENA valores PARENC PCOMA {:SqlInsert insert=new SqlInsert(path,valores,col);:}
+        ;
+
+eli::=ELIMINAR EN direccion FILT condicion PCOMA
+        |ELIMINAR EN direccion PCOMA{:SqlDelete del= new SqlDelete(path);:}
         ;
 
 

@@ -9,27 +9,28 @@ package inicio.flexycup;
 public class sym {
   /* terminals */
   public static final int AND = 8;
-  public static final int PUNTO = 13;
+  public static final int PUNTO = 14;
   public static final int OR = 7;
-  public static final int IGUAL = 15;
-  public static final int MAYIGUAL = 18;
-  public static final int PARENC = 22;
-  public static final int PARENA = 21;
-  public static final int ID = 10;
-  public static final int MEN = 20;
-  public static final int AST = 12;
-  public static final int NUM = 9;
+  public static final int IGUAL = 16;
+  public static final int MAYIGUAL = 19;
+  public static final int ELIMINAR = 9;
+  public static final int PARENC = 23;
+  public static final int PARENA = 22;
+  public static final int ID = 11;
+  public static final int MEN = 21;
+  public static final int AST = 13;
+  public static final int NUM = 10;
   public static final int VALORES = 4;
-  public static final int STRING = 14;
-  public static final int COMA = 11;
-  public static final int MENIGUAL = 17;
+  public static final int STRING = 15;
+  public static final int COMA = 12;
+  public static final int MENIGUAL = 18;
   public static final int INSERT = 3;
   public static final int EOF = 0;
   public static final int SELEC = 2;
   public static final int error = 1;
-  public static final int MAY = 19;
+  public static final int MAY = 20;
   public static final int EN = 5;
-  public static final int PCOMA = 16;
+  public static final int PCOMA = 17;
   public static final int FILT = 6;
   public static final String[] terminalNames = new String[] {
   "EOF",
@@ -41,6 +42,7 @@ public class sym {
   "FILT",
   "OR",
   "AND",
+  "ELIMINAR",
   "NUM",
   "ID",
   "COMA",

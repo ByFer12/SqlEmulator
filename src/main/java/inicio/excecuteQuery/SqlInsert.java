@@ -79,7 +79,7 @@ public class SqlInsert {
             // Cerrar el escritor
             writ.close();
         } catch (Exception e) {
-            System.out.println("No existe el archivo a escribir");
+            Inicio.errores.setText("El archivo al que accede no existe, verifique la ruta");
 
         }
 
@@ -146,7 +146,7 @@ public class SqlInsert {
             // Cerrar el escritor
             writ.close();
         } catch (Exception e) {
-            System.out.println("No existe el archivo a escribir");
+            Inicio.errores.setText("El archivo al que accede no existe, verifique la ruta");
 
         }
 
