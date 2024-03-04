@@ -4,48 +4,39 @@
  */
 package inicio.view;
 
+import inicio.Principal;
+import inicio.flexycup.SqlLexer;
+import inicio.flexycup.parser;
 import inicio.utils.ManageFilesAndDirectories;
 import inicio.utils.OpenClosedFiles;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.Console;
+import java.io.BufferedReader;
 
 import java.io.File;
-import java.io.FileFilter;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.FileNotFoundException;
+import java.io.StringReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
-import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
 
 /**
  *
@@ -68,12 +59,13 @@ public class Inicio extends javax.swing.JFrame {
     public static DocumentBuilderFactory dbFactory;
     private static DocumentBuilder dbBuilder;
     public static Document doc;
-    public  NuevoProyecto nuevoProyect;           
+    public NuevoProyecto nuevoProyect;
+
     public Inicio() {
         //String rutaSelect="";
         int posicion = 0;
         initComponents();
-        nuevoProyect=new NuevoProyecto();
+        nuevoProyect = new NuevoProyecto();
         arbolDirectorio.addTreeSelectionListener(new TreeSelectionListener() {
 
             @Override
@@ -95,9 +87,9 @@ public class Inicio extends javax.swing.JFrame {
 
                         System.out.println(tabbed1.getTitleAt(tabbed1.getSelectedIndex()));
                         System.out.println("Nombre: " + tabbed1.getTabCount());
-                        ruta=ruta + "/" + tabbed1.getTitleAt(tabbed1.getSelectedIndex());
-                        System.out.println("Ruta de archivo seleccionado: " +ruta );
-                        ManageFilesAndDirectories.cargarDatos();
+                        ruta = ruta + "/" + tabbed1.getTitleAt(tabbed1.getSelectedIndex());
+                        System.out.println("Ruta de archivo seleccionado: " + ruta);
+                        //ManageFilesAndDirectories.cargarDatos();
 
                     } else {
 
@@ -201,11 +193,13 @@ public class Inicio extends javax.swing.JFrame {
         jScrollPane4 = new javax.swing.JScrollPane();
         tableResult = new javax.swing.JTable();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jTextPane2 = new javax.swing.JTextPane();
+        consulta = new javax.swing.JTextPane();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         rutaConsole = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        errores = new javax.swing.JTextPane();
         jMenuBar1 = new javax.swing.JMenuBar();
         file = new javax.swing.JMenu();
         openFile = new javax.swing.JMenuItem();
@@ -262,13 +256,13 @@ public class Inicio extends javax.swing.JFrame {
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE))
         );
 
-        jTextPane2.setFont(new java.awt.Font("Liberation Sans", 0, 19)); // NOI18N
-        jTextPane2.addKeyListener(new java.awt.event.KeyAdapter() {
+        consulta.setFont(new java.awt.Font("Liberation Sans", 0, 19)); // NOI18N
+        consulta.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
-                jTextPane2KeyPressed(evt);
+                consultaKeyPressed(evt);
             }
         });
-        jScrollPane3.setViewportView(jTextPane2);
+        jScrollPane3.setViewportView(consulta);
 
         jLabel1.setFont(new java.awt.Font("Liberation Sans", 1, 20)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(0, 102, 255));
@@ -290,12 +284,16 @@ public class Inicio extends javax.swing.JFrame {
                 .addComponent(jLabel1))
         );
 
+        rutaConsole.setEditable(false);
         rutaConsole.setFont(new java.awt.Font("Liberation Sans", 0, 16)); // NOI18N
 
         jLabel2.setFont(new java.awt.Font("Liberation Sans", 1, 36)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(0, 102, 255));
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Resultado");
+
+        errores.setEditable(false);
+        jScrollPane2.setViewportView(errores);
 
         file.setText("Archivo");
         file.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -348,7 +346,8 @@ public class Inicio extends javax.swing.JFrame {
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(rutaConsole, javax.swing.GroupLayout.PREFERRED_SIZE, 543, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jScrollPane2))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(18, 18, 18)
@@ -377,9 +376,13 @@ public class Inicio extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(rutaConsole, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(38, 38, 38))
+                        .addComponent(jScrollPane3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(44, 44, 44))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(38, 38, 38))))
         );
 
         pack();
@@ -409,27 +412,46 @@ public class Inicio extends javax.swing.JFrame {
             modelo = new DefaultTreeModel(raiz);
             arbolDirectorio.setModel(modelo);
 
-        rutaConsole.setText(ideFile.getAbsolutePath());
+            rutaConsole.setText(ideFile.getAbsolutePath());
         } else {
             JOptionPane.showMessageDialog(null, "No se selecciono ninguna carpeta");
         }
-        
+
     }//GEN-LAST:event_openFileActionPerformed
 
-    private void jTextPane2KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextPane2KeyPressed
-        System.out.println("Hola acaban de hacer enter");
-    }//GEN-LAST:event_jTextPane2KeyPressed
+    private void consultaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_consultaKeyPressed
+        //System.out.println("Hola acaban de hacer enter");
+        //String Sho = "SELECCIONAR nombre,edad EN hoas.asdsd FILTRAR asda=34;";
+          String oreo = consulta.getText();
+          String consult=oreo.trim();
+
+        if (consult.endsWith(";") && evt.getKeyCode()== 10) {
+            try {
+                System.out.println("consulta: "+consult);
+                //
+//
+                SqlLexer flexe = new SqlLexer(new BufferedReader(new StringReader(consult)));
+                parser pa = new parser(flexe);
+                pa.parse();
+                
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (Exception ex) {
+                Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+
+    }//GEN-LAST:event_consultaKeyPressed
 
     private void newProjectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newProjectActionPerformed
-       
-       nuevoProyect.setVisible(true);
+
+        nuevoProyect.setVisible(true);
 //
 //        }
 
     }//GEN-LAST:event_newProjectActionPerformed
-    
 
-    
     public static DefaultMutableTreeNode cargarEstructuraProyecto(File idFile) {
         DefaultMutableTreeNode raiz = null;
         try {
@@ -456,7 +478,7 @@ public class Inicio extends javax.swing.JFrame {
         for (int i = 0; i < carpetas.getLength(); i++) {
             Element carpeta = (Element) carpetas.item(i);
             // Verificar que la carpeta sea un hijo directo del elemento actual
-            
+
             if (carpeta.getParentNode().equals(element)) {
                 String nombreCarpeta = carpeta.getAttribute("nombre");
                 DefaultMutableTreeNode folderNode = new DefaultMutableTreeNode(nombreCarpeta);
@@ -475,7 +497,7 @@ public class Inicio extends javax.swing.JFrame {
             if (archivo.getParentNode().equals(element)) {
                 String nombreArchivo = new File(archivo.getAttribute("ubicacion")).getName();
                 DefaultMutableTreeNode fileNode = new DefaultMutableTreeNode(nombreArchivo);
-              
+
                 parent.add(fileNode);
             }
         }
@@ -492,6 +514,8 @@ public class Inicio extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public static javax.swing.JTree arbolDirectorio;
+    private javax.swing.JTextPane consulta;
+    private javax.swing.JTextPane errores;
     private javax.swing.JMenu file;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -501,9 +525,9 @@ public class Inicio extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JTextPane jTextPane2;
     private javax.swing.JMenuItem newProject;
     private javax.swing.JMenuItem openFile;
     private javax.swing.JPanel pane1;

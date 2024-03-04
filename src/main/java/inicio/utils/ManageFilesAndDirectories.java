@@ -302,29 +302,29 @@ public class ManageFilesAndDirectories {
         
     }
 
-    public static void cargarDatos() {
-        DefaultTableModel tbModel = (DefaultTableModel) Inicio.tableResult.getModel();
-        try (BufferedReader read = new BufferedReader(new FileReader(ruta))) {
-            String hedLine = read.readLine();
-            String[] head = hedLine.split(",");
-            tbModel.setColumnCount(0);
-            tbModel.setNumRows(0);
-            for (String heads : head) {
-                tbModel.addColumn(heads.trim());
-            }
-            
-            String line;
-            while ((line = read.readLine()) != null) {
-                String[] rowData = line.split(",");
-                Vector<Object> rowVector = new Vector<>();
-                for (String value : rowData) {
-                    rowVector.add(value.trim());
-                }
-                tbModel.addRow(rowVector);
-            }
-        } catch (Exception e) {
-            
-        }
-    }
+//    public static void cargarDatos() {
+//        DefaultTableModel tbModel = (DefaultTableModel) Inicio.tableResult.getModel();
+//        try (BufferedReader read = new BufferedReader(new FileReader(ruta))) {
+//            String hedLine = read.readLine();
+//            String[] head = hedLine.split(",");
+//            tbModel.setColumnCount(0);
+//            tbModel.setNumRows(0);
+//            for (String heads : head) {
+//                tbModel.addColumn(heads.trim());
+//            }
+//            
+//            String line;
+//            while ((line = read.readLine()) != null) {
+//                String[] rowData = line.split(",");
+//                Vector<Object> rowVector = new Vector<>();
+//                for (String value : rowData) {
+//                    rowVector.add(value.trim());
+//                }
+//                tbModel.addRow(rowVector);
+//            }
+//        } catch (Exception e) {
+//            
+//        }
+//    }
     
 }

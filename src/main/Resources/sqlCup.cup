@@ -1,92 +1,120 @@
 package inicio.flexycup;
 
 import java_cup.runtime.*;
+import java.util.ArrayList;
+import java.util.List;
+import inicio.excecuteQuery.*;
 
-
+import java.util.LinkedList;
 parser code {:
+
+    public static LinkedList<Errors> erroresSintacticos=new LinkedList<Errors>();
+    public static List<String> col= new ArrayList<>();
+    public static List<String> path= new ArrayList<>();
+    public static List<String> cond= new ArrayList<>();
+    public static List<String> valores= new ArrayList<>();
     // Connect this parser to a scanner!
-    public ContadorOperacionesParser(ContadorOperacionesLexer lex) {
+    public parser(SqlLexer lex) {
 	    super(lex);
 	  }
 
-private ContadorOperaciones contador = new ContadorOperaciones();
-
-public ContadorOperaciones getContador() {
-    return contador;
-}
-
-public void syntax_error(Symbol cur_token) {
-            System.out.println("Simbolo con error:" + symbl_name_from_id(cur_token.sym));
-            System.out.println("Linea " + cur_token.left);
-            System.out.println("Columna " + cur_token.right);
-            if (expected_token_ids().isEmpty()) {
-                System.out.println("ya no se esperaba ningun simbolo");
-            }
+    public void syntax_error(Symbol s) {
+           String lexema=s.value.toString();
+           int columna=s.right;
+           int fila=s.left;
+           System.out.println("Error Sintactico: "+lexema+" en fila: "+fila+" y columna: "+columna);
+           Errors er=new Errors(lexema,"Error sintactico","No se esperaba ese tokenn",fila,columna);
+           erroresSintacticos.add(er);
         }
-/*
-public void unrecovered_syntax_error(Symbol cur_token) {
-            System.out.println("Error irrecuperable sobrecargado");
-        }*/
+
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception {
+           String lexema=s.value.toString();
+           int columna=s.right;
+           int fila=s.left;
+           System.out.println("Error Sintactico: "+lexema+" en fila: "+fila+" y columna: "+columna);
+           Errors er=new Errors(lexema,"Error sintactico","No se esperaba ese tokenn",fila,columna);
+           erroresSintacticos.add(er);
+    }
 :}
 
 /* Terminals (tokens returned by the scanner). */
-terminal            P_COMA, SUMA, RESTA, DIVISION, MULTIPLICACION;
-terminal Integer    ENTERO;
+terminal             SELEC,INSERT,VALORES,EN,FILT,OR,AND;
+terminal            NUM,ID,COMA,AST,PUNTO,STRING,IGUAL,PCOMA,MENIGUAL,MAYIGUAL,MAY,MEN,PARENA,PARENC;
+
+
 
 /* Non-terminals */
-non terminal                         operacion;
-non terminal String                  simbolo;
-non terminal ContadorOperaciones     operaciones;
-
+non terminal     sql_query, column, direccion, condicion,sel,ins,valores;
 
 /* The grammar */
 
 
-start with operaciones;
-
-operaciones ::= operacion P_COMA operaciones        {: RESULT = contador; :}
-                | operacion                         {: RESULT = contador; :}
-                ;
-
-operacion   ::= ENTERO:e1 simbolo:sim ENTERO:e2     {: System.out.println("resultado: " ); 
-                                                    double resultado = 0;
-                                                    switch(sim) {
-                                                        case "s":
-                                                        resultado = e1 + e2;
-                                                        break;
-                                                        case "r":
-                                                        resultado = e1 - e2;
-                                                        break;
-                                                        case "d":
-                                                        resultado = e1 / e2;
-                                                        break;
-                                                        case "m":
-                                                        resultado = e1 * e2;
-                                                        break;
-                                                    }
-                                                    System.out.println(resultado);
-                                                :}
-                | error:er         {: /* no es necesario el manejo ya que estamos usando el syntax_error */:}
-                ;
-
-simbolo     ::= SUMA:s           {: System.out.println("Se econtro una suma: linea" + sleft + " column " + sright);  contador.incrementarSumas(); RESULT = "s";:}
-                | RESTA:r             {: System.out.println("Se econtro una resta" + r);  contador.incrementarRestas(); RESULT = "r"; :}
-                | DIVISION:d          {: System.out.println("Se econtro una division" + d);  contador.incrementarDiv(); RESULT = "d"; :}
-                | MULTIPLICACION:m    {: System.out.println("Se econtro una multiplicacion" + m);  contador.incrementarMult(); RESULT = "m"; :}
-               /* | error*/
-                ;
+start with sql_query;
 
 
+sql_query::=sel
+            |ins
+            ;
+sel::=SELEC column:colu EN direccion FILT condicion PCOMA{:
+                                                                    SqlSelect sel=new SqlSelect(col,path,cond);
 
-/*
-operaciones -> operacion ; operaciones
-            | operacion
+                                                                :}
+            | SELEC column EN direccion PCOMA{:
+                                               SqlSelect sel=new SqlSelect(col,path);
 
-operacion -> ENTERO simbolo ENTERO
+                                                :};
 
-simbolo -> SUMA
-        | RESTA
-        | DIVISION
-        | MULTIPLICACION
+ins::= INSERT EN direccion:d VALORES PARENA valores PARENC PCOMA {:SqlInsert insert=new SqlInsert(path,valores);:}
+        |INSERT EN direccion PARENA column PARENC  VALORES PARENA valores PARENC PCOMA
+        ;
 
-*/
+
+valores::= valores COMA STRING:s {:valores.add(s.toString());:}
+            |valores COMA NUM:n {:valores.add(n.toString());:}
+            |STRING:s {:valores.add(s.toString());:}
+            |NUM:n {:valores.add(n.toString());:};
+
+
+column::= column:colu COMA:c ID:i {:col.add(i.toString());:}
+          |ID:i{:
+                 col.add(i.toString());
+               :}
+          |AST:as {:
+                    col.add(as.toString());
+                  :};
+
+direccion::=direccion PUNTO ID:i {:path.add(i.toString());:}
+            |ID:i {:path.add(i.toString());:};
+
+condicion::=ID:i IGUAL:m STRING:s {:
+                                    cond.add(i.toString());
+                                    cond.add(m.toString());
+                                    cond.add(s.toString());
+                                :}
+            |ID:i  IGUAL:m NUM:n {:
+                                    cond.add(i.toString());
+                                    cond.add(m.toString());
+                                    cond.add(n.toString());
+                                  :}
+            |ID:i  MENIGUAL:m NUM:n {:
+                                    cond.add(i.toString());
+                                    cond.add(m.toString());
+                                    cond.add(n.toString());
+                                  :}
+            |ID:i  MAYIGUAL:m NUM:n {:
+                                    cond.add(i.toString());
+                                    cond.add(m.toString());
+                                    cond.add(n.toString());
+                                  :}
+            |ID:i  MAY:m NUM:n {:
+                                    cond.add(i.toString());
+                                    cond.add(m.toString());
+                                    cond.add(n.toString());
+                                   :}
+            |ID:i  MEN:m NUM:n {:
+                                    cond.add(i.toString());
+                                    cond.add(m.toString());
+                                    cond.add(n.toString());
+                                    :};
+
+
