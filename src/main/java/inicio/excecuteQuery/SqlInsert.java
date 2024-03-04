@@ -23,6 +23,11 @@ public class SqlInsert {
         this.path = path;
         this.valores = valores;
         this.columnas = columnas;
+        insertColumns();
+        this.path.clear();
+        this.valores.clear();
+        this.columnas.clear();
+        System.out.println("Estoy en insertar columnas");
     }
 
     /**
@@ -44,9 +49,10 @@ public class SqlInsert {
      */
     private void insertAll() {
         //DefaultTableModel tbModel = (DefaultTableModel) Inicio.tableResult.getModel();
+        StringBuilder pathh=metodoRuta();
         try {
-            BufferedWriter writ = new BufferedWriter(new FileWriter("/home/tuxrex/Escritorio/" + path.get(0) + "/" + path.get(1) + ".csv", true));
-            BufferedReader read = new BufferedReader(new FileReader("/home/tuxrex/Escritorio/" + path.get(0) + "/" + path.get(1) + ".csv"));
+            BufferedWriter writ = new BufferedWriter(new FileWriter("/home/tuxrex/Escritorio/" +pathh+ ".csv", true));
+            BufferedReader read = new BufferedReader(new FileReader("/home/tuxrex/Escritorio/" +pathh+ ".csv"));
             String hedLine = read.readLine();
             String[] head = hedLine.split(",");
             if (valores.size() < head.length) {
@@ -79,10 +85,14 @@ public class SqlInsert {
 
     }
 
+    /**
+     * Metodo para insertar datos en columnas especificas
+     */
     private void insertColumns() {
+        StringBuilder pathh=metodoRuta();
         try {
-            BufferedWriter writ = new BufferedWriter(new FileWriter("/home/tuxrex/Escritorio/" + path.get(0) + "/" + path.get(1) + ".csv", true));
-            BufferedReader read = new BufferedReader(new FileReader("/home/tuxrex/Escritorio/" + path.get(0) + "/" + path.get(1) + ".csv"));
+            BufferedWriter writ = new BufferedWriter(new FileWriter("/home/tuxrex/Escritorio/" + pathh + ".csv", true));
+            BufferedReader read = new BufferedReader(new FileReader("/home/tuxrex/Escritorio/" + pathh+ ".csv"));
             String hedLine = read.readLine();
             String[] head = hedLine.split(",");
 
@@ -103,16 +113,32 @@ public class SqlInsert {
                 JOptionPane.showMessageDialog(null, "Ha escrito elementos de mas");
                 return;
             }
+            boolean is=false;
             StringBuilder lineas = new StringBuilder();
-            for (int i = 0; i < valores.size(); i++) {
-                String aux = valores.get(i);
+            for (int i = 0; i < head.length; i++) {
+                String aux;
+                for (int j = 0; j < cols.size(); j++) {
+                 aux = valores.get(j);
                 if (aux.startsWith("\"") && aux.endsWith("\"")) {
                     aux = aux.substring(1, aux.length() - 1);
                 }
+                if(i==cols.get(j)){
+                    
                 lineas.append(aux);
-                if (i < valores.size() - 1) {
                     lineas.append(",");
+                    lineas.append(" ");
+                    lineas.append(",");
+
+                    is=true;
                 }
+
+                }
+                if(!is){
+                    lineas.append(" ");
+                    lineas.append(",");
+                    is=false;
+                }
+
             }
             lineas.append("\n");
             writ.write(lineas.toString());
@@ -124,6 +150,18 @@ public class SqlInsert {
 
         }
 
+    }
+
+    private StringBuilder metodoRuta() {
+        StringBuilder pathh = new StringBuilder();
+        for (int i = 0; i < path.size(); i++) {
+            pathh.append(path.get(i));
+            if (i < path.size() - 1) {
+                pathh.append("/");
+            }
+
+        }
+        return pathh;
     }
 
 }

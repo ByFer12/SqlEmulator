@@ -65,7 +65,7 @@ sel::=SELEC column:colu EN direccion FILT condicion PCOMA{:
                                                 :};
 
 ins::= INSERT EN direccion:d VALORES PARENA valores PARENC PCOMA {:SqlInsert insert=new SqlInsert(path,valores);:}
-        |INSERT EN direccion PARENA column PARENC  VALORES PARENA valores PARENC PCOMA
+        |INSERT EN direccion PARENA column PARENC  VALORES PARENA valores PARENC PCOMA {:SqlInsert insert=new SqlInsert(path,valores,col);:}
         ;
 
 

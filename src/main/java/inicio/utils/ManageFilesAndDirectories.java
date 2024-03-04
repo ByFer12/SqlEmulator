@@ -162,7 +162,11 @@ public class ManageFilesAndDirectories {
         }
         
     }
-    
+
+    /**
+     * Metodo para crear carpeta y actualizar
+     * @param slectFile
+     */
     public static void crearCarpeta(String slectFile) {
         boolean existe = false;
         Element root = doc.getDocumentElement();
@@ -231,7 +235,11 @@ public class ManageFilesAndDirectories {
         }
         
     }
-    
+
+    /**
+     * Metodo para eliminar carpeta y actualizar
+     * @param selectedDirectory
+     */
     public static void eliminarCarpeta(String selectedDirectory) {
         Element padre;
         NodeList archivos = doc.getElementsByTagName("CARPETA");
@@ -270,7 +278,17 @@ public class ManageFilesAndDirectories {
         arbolDirectorio.updateUI();
         
     }
-    
+
+    /**
+     * Metodo para crear un nuevo proyecto o archivo.ide
+     * @param path
+     * @param nombre
+     * @param carpeta
+     * @param archivo
+     * @throws ParserConfigurationException
+     * @throws TransformerConfigurationException
+     * @throws TransformerException
+     */
     public static void crearProject(String path, String nombre, String carpeta, String archivo) throws ParserConfigurationException, TransformerConfigurationException, TransformerException {
         
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

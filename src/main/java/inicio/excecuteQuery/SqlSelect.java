@@ -58,7 +58,9 @@ public class SqlSelect {
      */
     private void selectAll() {
         DefaultTableModel tbModel = (DefaultTableModel) Inicio.tableResult.getModel();
-        try (BufferedReader read = new BufferedReader(new FileReader("/home/tuxrex/Escritorio/" + path.get(0) + "/" + path.get(1) + ".csv"))) {
+        StringBuilder pathh = metodoRuta();
+
+        try (BufferedReader read = new BufferedReader(new FileReader("/home/tuxrex/Escritorio/" + pathh + ".csv"))) {
             String hedLine = read.readLine();
             String[] head = hedLine.split(",");
             tbModel.setColumnCount(0);
@@ -85,19 +87,25 @@ public class SqlSelect {
     }
 
     /**
-     * Seleccionar todas las columnas Con filtro
+     * Seleccionar todas las columnas sin filtro
      */
     private void selectColumnSinCondition() {
+
         DefaultTableModel tbModel = (DefaultTableModel) Inicio.tableResult.getModel();
-        try (BufferedReader read = new BufferedReader(new FileReader("/home/tuxrex/Escritorio/" + path.get(0) + "/" + path.get(1) + ".csv"))) {
+        StringBuilder pathh = metodoRuta();
+        try (BufferedReader read = new BufferedReader(new FileReader("/home/tuxrex/Escritorio/" + pathh + ".csv"))) {
             String hedLine = read.readLine();
             String[] allColumns = hedLine.split(",");
 
+            int numCol = -1;
+            List<Integer> cols = new ArrayList<>();
             //Aqui seleccionamos las columnas que hemos escrito
             List<String> actualColumns = new ArrayList<>();
             for (String heads : allColumns) {
+                numCol++;
                 if (columna.contains(heads.trim())) {
                     actualColumns.add(heads.trim());
+                    cols.add(numCol);
                 }
             }
             //Aqui reseteamos las filas y las columnas para las nuevas columnas seleccionados
@@ -109,10 +117,19 @@ public class SqlSelect {
 
             String line;
             while ((line = read.readLine()) != null) {
+
                 String[] rowData = line.split(",");
+                
+
                 Vector<Object> rowVector = new Vector<>();
-                for (String value : rowData) {
-                    rowVector.add(value.trim());
+                for (int i = 0; i < rowData.length; i++) {
+                    for (int j = 0; j < cols.size(); j++) {
+                        if (i == cols.get(j)) {
+
+                            rowVector.add(rowData[i].trim());
+                        }
+
+                    }
                 }
                 tbModel.addRow(rowVector);
             }
@@ -128,7 +145,8 @@ public class SqlSelect {
      */
     private void selectAllWithCondition() {
         DefaultTableModel tbModel = (DefaultTableModel) Inicio.tableResult.getModel();
-        try (BufferedReader read = new BufferedReader(new FileReader("/home/tuxrex/Escritorio/" + path.get(0) + "/" + path.get(1) + ".csv"))) {
+        StringBuilder pathh = metodoRuta();
+        try (BufferedReader read = new BufferedReader(new FileReader("/home/tuxrex/Escritorio/" + pathh + ".csv"))) {
             String hedLine = read.readLine();
             String[] head = hedLine.split(",");
             tbModel.setColumnCount(0);
@@ -155,15 +173,15 @@ public class SqlSelect {
 
             String line;
             while ((line = read.readLine()) != null) {
-               String dato="";
+                String dato = "";
                 String[] rowData = line.split(",");
-                 String texto = cond.get(2);
+                String texto = cond.get(2);
                 if (texto.startsWith("\"") && texto.endsWith("\"")) {
                     // Eliminar las comillas dobles escapadas
-                   dato= texto.substring(1, texto.length() - 1);
-                    
-                }else{
-                    dato=texto;
+                    dato = texto.substring(1, texto.length() - 1);
+
+                } else {
+                    dato = texto;
                 }
                 if (rowData.length > indexColumn && rowData[indexColumn].trim().equals(dato)) {
                     Vector<Object> rowVector = new Vector<>();
@@ -185,8 +203,9 @@ public class SqlSelect {
      */
     private void selectColumnWithCondition() {
         DefaultTableModel tbModel = (DefaultTableModel) Inicio.tableResult.getModel();
+        StringBuilder pathh = metodoRuta();
 
-        try (BufferedReader read = new BufferedReader(new FileReader("/home/tuxrex/Escritorio/" + path.get(0) + "/" + path.get(1) + ".csv"))) {
+        try (BufferedReader read = new BufferedReader(new FileReader("/home/tuxrex/Escritorio/" + pathh + ".csv"))) {
             String hedLine = read.readLine();
             String[] head = hedLine.split(",");
 
@@ -200,9 +219,8 @@ public class SqlSelect {
 
             }
 
-
-            int numCol=-1;
-            List<Integer> cols=new ArrayList<>();
+            int numCol = -1;
+            List<Integer> cols = new ArrayList<>();
             //Aqui seleccionamos las columnas que hemos escrito
             List<String> actualColumns = new ArrayList<>();
             for (String heads : head) {
@@ -223,24 +241,24 @@ public class SqlSelect {
                 JOptionPane.showMessageDialog(null, "La columna no existe");
                 return;
             }
-            System.out.println("Simbolo de condicion: "+cond.get(1));
+
             String line;
             while ((line = read.readLine()) != null) {
-                String dato="";
+                String dato = "";
                 String[] rowData = line.split(",");
                 String texto = cond.get(2);
                 if (texto.startsWith("\"") && texto.endsWith("\"")) {
                     // Eliminar las comillas dobles escapadas
-                    dato= texto.substring(1, texto.length() - 1);
+                    dato = texto.substring(1, texto.length() - 1);
 
-                }else{
-                    dato=texto;
+                } else {
+                    dato = texto;
                 }
                 if (rowData.length > indexColumn && rowData[indexColumn].trim().equals(dato)) {
                     Vector<Object> rowVector = new Vector<>();
                     for (int i = 0; i < rowData.length; i++) {
                         for (int j = 0; j < cols.size(); j++) {
-                            if(i==cols.get(j)){
+                            if (i == cols.get(j)) {
 
                                 rowVector.add(rowData[i].trim());
                             }
@@ -255,5 +273,17 @@ public class SqlSelect {
 
         }
 
+    }
+
+    private StringBuilder metodoRuta() {
+        StringBuilder pathh = new StringBuilder();
+        for (int i = 0; i < path.size(); i++) {
+            pathh.append(path.get(i));
+            if (i < path.size() - 1) {
+                pathh.append("/");
+            }
+
+        }
+        return pathh;
     }
 }

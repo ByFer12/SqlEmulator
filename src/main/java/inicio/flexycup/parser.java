@@ -273,7 +273,7 @@ class CUP$parser$actions {
           case 6: // ins ::= INSERT EN direccion PARENA column PARENC VALORES PARENA valores PARENC PCOMA 
             {
               Object RESULT =null;
-
+		SqlInsert insert=new SqlInsert(path,valores,col);
               CUP$parser$result = parser.getSymbolFactory().newSymbol("ins",5, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-10)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
