@@ -2,10 +2,12 @@
 /home/tuxrex/NetBeansProjects/Web/SQLemulator/src/main/java/inicio/utils/ManageFilesAndDirectories.java
 /home/tuxrex/NetBeansProjects/Web/SQLemulator/src/main/java/inicio/utils/OpenClosedFiles.java
 /home/tuxrex/NetBeansProjects/Web/SQLemulator/src/main/java/inicio/excecuteQuery/SqlInsert.java
+/home/tuxrex/NetBeansProjects/Web/SQLemulator/src/main/java/inicio/view/Errores.java
 /home/tuxrex/NetBeansProjects/Web/SQLemulator/src/main/java/inicio/excecuteQuery/SqlSelect.java
 /home/tuxrex/NetBeansProjects/Web/SQLemulator/src/main/java/inicio/flexycup/parser.java
 /home/tuxrex/NetBeansProjects/Web/SQLemulator/src/main/java/inicio/flexycup/sym.java
 /home/tuxrex/NetBeansProjects/Web/SQLemulator/src/main/java/inicio/view/Inicio.java
+/home/tuxrex/NetBeansProjects/Web/SQLemulator/src/main/java/inicio/excecuteQuery/SqlDelete.java
 /home/tuxrex/NetBeansProjects/Web/SQLemulator/src/main/java/inicio/view/Files.java
 /home/tuxrex/NetBeansProjects/Web/SQLemulator/src/main/java/inicio/Principal.java
 /home/tuxrex/NetBeansProjects/Web/SQLemulator/src/main/java/inicio/flexycup/Errors.java

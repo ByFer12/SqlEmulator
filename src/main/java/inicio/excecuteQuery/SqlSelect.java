@@ -81,6 +81,7 @@ public class SqlSelect {
             }
         } catch (Exception e) {
             Inicio.errores.setText("El archivo al que accede no existe, verifique la ruta");
+            Inicio.errors=true;
 
         }
 
@@ -135,7 +136,7 @@ public class SqlSelect {
             }
         } catch (Exception e) {
             Inicio.errores.setText("El archivo al que accede no existe, verifique la ruta");
-
+            Inicio.errors=true;
         }
 
     }
@@ -193,7 +194,7 @@ public class SqlSelect {
             }
         } catch (Exception e) {
            Inicio.errores.setText("El archivo al que accede no existe, verifique la ruta");
-
+           Inicio.errors=true;
         }
 
     }
@@ -270,7 +271,7 @@ public class SqlSelect {
             }
         } catch (Exception e) {
             Inicio.errores.setText("El archivo al que accede no existe, verifique la ruta");
-
+            Inicio.errors=true;
         }
 
     }

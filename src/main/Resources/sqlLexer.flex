@@ -52,6 +52,8 @@ letters=[a-zA-Z]
     "INSERTAR" { return symbol(sym.INSERT,yytext()); }
     "VALORES" { return symbol(sym.VALORES,yytext()); }
       "ELIMINAR"     {return symbol(sym.ELIMINAR,yytext());}
+      "ACTUALIZAR" {return symbol(sym.ACTU,yytext());}
+      "ASIGNAR" {return symbol(sym.ASIGN,yytext());}
 	"EN"	{ return symbol(sym.EN, yytext());}
 
 	"FILTRAR"		{ return symbol(sym.FILT, yytext());}
@@ -76,11 +78,8 @@ letters=[a-zA-Z]
     ")"     {return symbol(sym.PARENC,yytext());}
 
 
-
     {entero}+ {return symbol(sym.NUM, yytext());}
     \"[^\"]*\"  {return symbol(sym.STRING,yytext());}
-
-
 
 	{WhiteSpace} 	{/* ignoramos */}
 

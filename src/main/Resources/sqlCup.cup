@@ -45,13 +45,13 @@ parser code {:
 :}
 
 /* Terminals (tokens returned by the scanner). */
-terminal             SELEC,INSERT,VALORES,EN,FILT,OR,AND,ELIMINAR;
+terminal             SELEC,INSERT,VALORES,EN,FILT,OR,AND,ELIMINAR,ACTU,ASIGN;
 terminal            NUM,ID,COMA,AST,PUNTO,STRING,IGUAL,PCOMA,MENIGUAL,MAYIGUAL,MAY,MEN,PARENA,PARENC;
 
 
 
 /* Non-terminals */
-non terminal     sql_query, column, direccion, condicion,sel,ins,eli,valores;
+non terminal     sql_query,actu, column, direccion, condicion,sel,ins,eli,valores,asignaciones;
 
 /* The grammar */
 
@@ -62,6 +62,7 @@ start with sql_query;
 sql_query::=sel
             |ins
             |eli
+            |actu
             ;
 sel::=SELEC column:colu EN direccion FILT condicion PCOMA{:
                                                                     SqlSelect sel=new SqlSelect(col,path,cond);
@@ -76,10 +77,17 @@ ins::= INSERT EN direccion:d VALORES PARENA valores PARENC PCOMA {:SqlInsert ins
         |INSERT EN direccion PARENA column PARENC  VALORES PARENA valores PARENC PCOMA {:SqlInsert insert=new SqlInsert(path,valores,col);:}
         ;
 
-eli::=ELIMINAR EN direccion FILT condicion PCOMA
+eli::=ELIMINAR EN direccion FILT condicion PCOMA {:SqlDelete del= new SqlDelete(cond, path);:}
         |ELIMINAR EN direccion PCOMA{:SqlDelete del= new SqlDelete(path);:}
         ;
 
+actu::= ACTU EN direccion ASIGN asignaciones FILT condicion AND  condicion PCOMA
+        |ACTU EN direccion ASIGN asignaciones PCOMA
+        ;
+
+asignaciones::=asignaciones COMA condicion
+                |condicion
+                ;
 
 valores::= valores COMA STRING:s {:valores.add(s.toString());:}
             |valores COMA NUM:n {:valores.add(n.toString());:}

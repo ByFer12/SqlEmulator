@@ -18,6 +18,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
@@ -45,7 +46,7 @@ import org.w3c.dom.NodeList;
 public class Inicio extends javax.swing.JFrame {
 
     public static boolean iscreates = false;
-
+ ArrayList<Integer> lineNumbers = new ArrayList<>();
     /**
      * Creates new form Inicio
      */
@@ -203,6 +204,8 @@ public class Inicio extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         errores = new javax.swing.JTextPane();
         btnErrors = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
+        positionCode = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         file = new javax.swing.JMenu();
         openFile = new javax.swing.JMenuItem();
@@ -310,6 +313,8 @@ public class Inicio extends javax.swing.JFrame {
             }
         });
 
+        positionCode.setText("Position: 0, 0");
+
         file.setText("Archivo");
         file.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -359,7 +364,13 @@ public class Inicio extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane3)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(rutaConsole, javax.swing.GroupLayout.PREFERRED_SIZE, 543, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(rutaConsole, javax.swing.GroupLayout.PREFERRED_SIZE, 543, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(positionCode)
+                        .addGap(81, 81, 81))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPane2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -390,7 +401,10 @@ public class Inicio extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(rutaConsole, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(rutaConsole, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel3)
+                            .addComponent(positionCode))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -442,7 +456,8 @@ public class Inicio extends javax.swing.JFrame {
     private void consultaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_consultaKeyPressed
         //System.out.println("Hola acaban de hacer enter");
         //String Sho = "SELECCIONAR nombre,edad EN hoas.asdsd FILTRAR asda=34;";
-          String oreo = consulta.getText();
+        updateCursorPosition();
+        String oreo = consulta.getText();
           String consult=oreo.trim();
 
         if (consult.endsWith(";") && evt.getKeyCode()== 10) {
@@ -477,6 +492,28 @@ public class Inicio extends javax.swing.JFrame {
 
     }//GEN-LAST:event_newProjectActionPerformed
 
+    private void updateCursorPosition() {
+        int caretPosition = consulta.getCaretPosition();
+        int newLineNumber = consulta.getDocument().getDefaultRootElement().getElementIndex(caretPosition) + 1;
+
+        if (!lineNumbers.contains(newLineNumber)) {
+            lineNumbers.add(newLineNumber);
+        }
+
+        String lineNumbersText = buildLineNumbersText();
+//        lineNumberLabel.setText("<html>" + lineNumbersText.replace("\n", "<br>") + "</html>");
+
+        positionCode.setText("Position: " + newLineNumber + ", "
+                + (caretPosition - consulta.getDocument().getDefaultRootElement().getElement(newLineNumber - 1).getStartOffset() + 1));
+    }
+
+    private String buildLineNumbersText() {
+        StringBuilder sb = new StringBuilder();
+        for (int lineNumber : lineNumbers) {
+            sb.append(lineNumber).append("<br>");
+        }
+        return sb.toString();
+    }
     private void btnErrorsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnErrorsActionPerformed
         Errores er=new Errores();
         er.setVisible(true);
@@ -551,6 +588,7 @@ public class Inicio extends javax.swing.JFrame {
     private javax.swing.JMenu file;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
@@ -563,6 +601,7 @@ public class Inicio extends javax.swing.JFrame {
     private javax.swing.JMenuItem newProject;
     private javax.swing.JMenuItem openFile;
     private javax.swing.JPanel pane1;
+    private javax.swing.JLabel positionCode;
     public static javax.swing.JTextField rutaConsole;
     public static javax.swing.JTabbedPane tabbed1;
     public static javax.swing.JTable tableResult;
